@@ -23,8 +23,8 @@ MVP Checklist:
   - [x] Header: Obter dados do usuário para apresentar seu nome completo
   - [x] Header: Botão Finalizar Sessão remove o JWT do storage e redireciona para index.html (quando for clicado)
   - [x] Ao carregar a página, buscar as tarefas (get para /tasks) e exibir na lista
-  - [] Form Nova Tarefa: Ao enviar uma nova tarefa, deve realizar um post para API (/tasks)
-  - [] Quando uma tarefa for adicionada, a lista de tarefas deve ser atualizada
+  - [x] Form Nova Tarefa: Ao enviar uma nova tarefa, deve realizar um post para API (/tasks)
+  - [-] Quando uma tarefa for adicionada, a lista de tarefas deve ser atualizada
   - [] Quando uma tarefa for completada, deve realizar um put para API (tasks/ID_DA_TASK) alterando a chave completed para true
 
 Melhorias:

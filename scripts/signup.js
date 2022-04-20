@@ -57,9 +57,9 @@ form.onclick = (function (event) { //estou registrando uma função quando o eve
             body: JSON.stringify(objeto)
         })
             .then(function (response) { return response.json() }) //json converte o objeto em java script
-            .then(function (response) {localStorage.setItem("chave jwt", response.jwt) //a função irá receber como parametro a resposta do .then anterior e irá retornar a chave jwt e armazenar no computador do usúario através de localStore. 
+            .then(function (response) {localStorage.setItem("jwt", response.jwt) //a função irá receber como parametro a resposta do .then anterior e irá retornar a chave jwt e armazenar no computador do usúario através de localStore. 
                 
-                if (localStorage.getItem("chave jwt") == response.jwt) { //comparação das chave que salvei response.jwt com o localStorage
+                if (localStorage.getItem("jwt") == response.jwt) { //comparação das chave que salvei response.jwt com o localStorage
                     return window.location.href = "tarefas.html" //manda o usuario para a página de login
                 }
                 else {

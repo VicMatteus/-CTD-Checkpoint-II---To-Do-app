@@ -10,7 +10,7 @@ const obterUsuario = chave =>
     fetch('https://ctd-todo-api.herokuapp.com/v1/users/getMe', {
         headers: {
             'Content-type': 'application/json',
-            authorization: chave //a = parametro
+            authorization: chave 
         }
     })
 

@@ -1,5 +1,6 @@
 # Projeto To Do - Checkpoint II
-
+## Projeto final da disciplina de front-end 2. Site com aplicatico To Do.
+### Decidi pegar o projeto que foi apresentado e melhorá-lo para práticar. O primeiro upload do projeto aqui no git foi realizado quando ele estava pronto para ser apresentado, mas ainda haviam falhas, então, a fim de praticar e ter o projeto como um troféu, estou trabalhando nele. 👨🏽‍💻
 MVP Checklist:
 
 - Login (index.html)
@@ -24,12 +25,13 @@ MVP Checklist:
   - [x] Header: Botão Finalizar Sessão remove o JWT do storage e redireciona para index.html (quando for clicado)
   - [x] Ao carregar a página, buscar as tarefas (get para /tasks) e exibir na lista
   - [x] Form Nova Tarefa: Ao enviar uma nova tarefa, deve realizar um post para API (/tasks)
-  - [-] Quando uma tarefa for adicionada, a lista de tarefas deve ser atualizada
-  - [] Quando uma tarefa for completada, deve realizar um put para API (tasks/ID_DA_TASK) alterando a chave completed para true
+  - [x] Quando uma tarefa for adicionada, a lista de tarefas deve ser atualizada
+  - [x] Quando uma tarefa for completada, deve realizar um put para API (tasks/ID_DA_TASK) alterando a chave completed para true
 
 Melhorias:
 
-- Identificar campos invalidos com CSS (ex. borda vermelha)
+- Identificar campos invalidos com CSS (ex. borda vermelha).
+- Implementar minha validação de dados como login e senha no lado do cliente que fora removida.
 
 ---
 

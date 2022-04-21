@@ -71,99 +71,59 @@ function carregarTarefas()
         .then(resposta => resposta.json())
         .then(tarefas =>
         {
-            const tasks = querySelector('.tarefas-pendentes')
-            //setTimeout(() => {
-                tasks.innerHTML="";
-                tarefas.forEach(tarefa =>
+            let pendentes = querySelector('.tarefas-pendentes');
+            pendentes.innerHTML = "";
+            tarefas.forEach(tarefa =>
+            {
+                if (tarefa.completed)
                 {
-                    if(tarefa.completed)
-                    {
-                        let data = new Date(tarefa.createdAt)
-                        let dataFormatada = data.toLocaleDateString('pt-BR')
-                        let task = `
+                    let data = new Date(tarefa.createdAt)
+                    let dataFormatada = data.toLocaleDateString('pt-BR')
+                    let item = `
                         <li class="tarefa">
-                            <div class="concluida"></div>
-                            <div class="descricao">
-                            <p class="nome">${tarefa.description}</p>
-                            <p class="timestamp">Criada em: ${dataFormatada}</p>
-                            </div>
-                        </li>`
-                        let terminadas = querySelector('.tarefas-terminadas');
-                        terminadas.innerHTML += task;
-                    }
-                    else
-                    {
-                        /*Assim eu não consigui adicionar a funcionalidade de cada item ter seu botão atrelado a propria tarefa :/
-                        let pendentes = querySelector('.tarefas-pendentes');
-                        let data = new Date(tarefa.createdAt);
-                        let dataFormatada = data.toLocaleDateString('pt-BR');
-                        let task = `
-                        <li class="tarefa">
-                        <button class="not-done"></button>
+                        <div class="concluida"></div>
                         <div class="descricao">
                             <p class="nome">${tarefa.description}</p>
                             <p class="timestamp">Criada em: ${dataFormatada}</p>
                         </div>
                         </li>`
-                        pendentes.innerHTML += task;
-                        */
-                       const li = document.createElement('li')
-                       const descricao = document.createElement('div')
-   
-                       const button = document.createElement('button');
-                       button.classList.add('not-done');
-                       button.addEventListener('click', function(){
-                           show('Concluída');
-                           marcarConcluida(tarefa);
-                       })
-   
-                       const p1 = document.createElement('p')
-                       const p2 = document.createElement('p')
-                       const description = document.createTextNode(tarefa.description)
-                       let data = new Date(tarefa.createdAt)
-                       let dataFormatada = 'Criada em: ' + data.toLocaleDateString('pt-BR')
-                       const dataNode = document.createTextNode(dataFormatada)
-                       
-                       p1.appendChild(description)
-                       p2.appendChild(dataNode)
-                       descricao.appendChild(p1)
-                       descricao.appendChild(p2)
-                       
-                       li.classList.add('tarefa')
-                       descricao.classList.add('descricao')
-                       p1.classList.add('nome')
-                       p2.classList.add('timestamp')
-                       
-                       li.appendChild(button)
-   
-                       li.appendChild(descricao)
-                       tasks.appendChild(li)
-                    }
-                    show(tarefa.description)
-                })
-                /*
-                funciona
-                //ativa o gatilho da ação ao clicar no item de marcar concluida
-                botaoMarcar = querySelectorAll('button');
-                for(const botao of botaoMarcar)
-                {
-                    show('botao');
-                    botao.addEventListener('click', function ()
-                    {
-                        marcarConcluida(tarefa)
-                    })
+                    let terminadas = querySelector('.tarefas-terminadas');
+                    terminadas.innerHTML += item;
                 }
-                */
-                
-            //}, 1000);
+                else
+                {
+                    let pendentes = querySelector('.tarefas-pendentes');
+                    let data = new Date(tarefa.createdAt);
+                    let dataFormatada = data.toLocaleDateString('pt-BR');
+
+                    let li = document.createElement('li');
+                    li.classList.add("tarefa");
+                    let not_done = document.createElement('div');
+                    not_done.classList.add('not-done');
+                    not_done.addEventListener('click', function ()
+                    {
+                        show("clicado")
+                        marcarConcluida(tarefa);
+                    });
+                    li.append(not_done);
+                    let task = `<div class="descricao">
+                            <p class="nome">${tarefa.description}</p>
+                            <p class="timestamp">Criada em: ${dataFormatada}</p>
+                        </div>`
+                    template = document.createElement('template');
+                    template.innerHTML = task;
+                    li.appendChild(template.content) //essa é uma jogada bacana tirada daqui: https://stackoverflow.com/questions/494143/creating-a-new-dom-element-from-an-html-string-using-built-in-dom-methods-or-pro
+                    pendentes.appendChild(li);
+                }
             })
+        })
 }
 
 const botaoCriar = getId('btnEnvia')
 botaoCriar.addEventListener('click', function (event)
 {
     const descricao = getId('novaTarefa').value;
-    if(descricao) //uso de truthy e falsy
+    if (descricao) //uso de truthy e falsy
     {
         const body = {
             description: descricao,
@@ -177,18 +137,20 @@ botaoCriar.addEventListener('click', function (event)
             },
             body: JSON.stringify(body)
         })
-            .then(response => {
+            .then(response =>
+            {
                 return response.json()
             })
             .then(novaTarefa =>
             {
+                //Aqui, o problema de apenas criar uma tarefa por login estava no botão. Não sei o motivo ainda.
                 getId('novaTarefa').value = '';
                 carregarTarefas();
             })
     }
     else
     {
-        event.preventDefault(); 
+        event.preventDefault();
         //ficará melhor quando eu alertar direto pelo estilo no HTML
         alert('insira um nome válido para a tarefa');
     }

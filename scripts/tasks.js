@@ -58,6 +58,25 @@ function marcarConcluida(tarefa)
         });
 }
 
+function excluir(task)
+{
+    show("exlcuir");
+    settings = {
+        "method": "DELETE",
+        "headers": {
+            "authorization": chave
+        }
+    }
+    fetch(`https://ctd-todo-api.herokuapp.com/v1/tasks/${task.id}`, settings)
+        .then(resposta => resposta.json())
+        .then(informacao => 
+        {
+            alert(informacao);
+            carregarTarefas();
+        })
+}
+
+
 window.onload = carregarTarefas();
 function carregarTarefas()
 {
@@ -72,27 +91,43 @@ function carregarTarefas()
         .then(tarefas =>
         {
             let pendentes = querySelector('.tarefas-pendentes');
+            let terminadas = querySelector('.tarefas-terminadas');
             pendentes.innerHTML = "";
+            terminadas.innerHTML = "";
             tarefas.forEach(tarefa =>
             {
                 if (tarefa.completed)
                 {
                     let data = new Date(tarefa.createdAt)
                     let dataFormatada = data.toLocaleDateString('pt-BR')
+
+                    let li = document.createElement('li');
+                    li.classList.add("tarefa");
+
                     let item = `
-                        <li class="tarefa">
                         <div class="concluida"></div>
                         <div class="descricao">
                             <p class="nome">${tarefa.description}</p>
                             <p class="timestamp">Criada em: ${dataFormatada}</p>
-                        </div>
-                        </li>`
-                    let terminadas = querySelector('.tarefas-terminadas');
-                    terminadas.innerHTML += item;
+                        </div>`
+                    
+                    template = document.createElement('template');
+                    template.innerHTML = item;
+                    
+                    li.appendChild(template.content);
+
+                    let excluirBtn = document.createElement('button');
+                    excluirBtn.classList.add('excluir');
+                    excluirBtn.innerText = 'Excluir'
+                    excluirBtn.addEventListener('click', function ()
+                    {
+                        excluir(tarefa);
+                    });
+                    li.appendChild(excluirBtn);
+                    terminadas.appendChild(li)
                 }
                 else
                 {
-                    let pendentes = querySelector('.tarefas-pendentes');
                     let data = new Date(tarefa.createdAt);
                     let dataFormatada = data.toLocaleDateString('pt-BR');
 
@@ -100,11 +135,8 @@ function carregarTarefas()
                     li.classList.add("tarefa");
                     let not_done = document.createElement('div');
                     not_done.classList.add('not-done');
-                    not_done.addEventListener('click', function ()
-                    {
-                        show("clicado")
-                        marcarConcluida(tarefa);
-                    });
+                    not_done.addEventListener('click', () => marcarConcluida(tarefa));
+
                     li.append(not_done);
                     let task = `<div class="descricao">
                             <p class="nome">${tarefa.description}</p>
@@ -112,7 +144,18 @@ function carregarTarefas()
                         </div>`
                     template = document.createElement('template');
                     template.innerHTML = task;
-                    li.appendChild(template.content) //essa é uma jogada bacana tirada daqui: https://stackoverflow.com/questions/494143/creating-a-new-dom-element-from-an-html-string-using-built-in-dom-methods-or-pro
+                    li.appendChild(template.content)
+                    /*
+                    essa é uma jogada bacana tirada daqui: https://stackoverflow.com/questions/494143/creating-a-new-dom-element-from-an-html-string-using-built-in-dom-methods-or-pro
+                    */
+                    let excluirBtn = document.createElement('button');
+                    excluirBtn.classList.add('excluir');
+                    excluirBtn.innerText = 'Excluir'
+                    excluirBtn.addEventListener('click', function ()
+                    {
+                        excluir(tarefa);
+                    });
+                    li.appendChild(excluirBtn);
                     pendentes.appendChild(li);
                 }
             })
@@ -120,7 +163,7 @@ function carregarTarefas()
 }
 
 const botaoCriar = getId('btnEnvia')
-botaoCriar.addEventListener('click', function (event)
+botaoCriar.addEventListener('click', function (event) //inflizmente, com submit não funciona bem.
 {
     const descricao = getId('novaTarefa').value;
     if (descricao) //uso de truthy e falsy

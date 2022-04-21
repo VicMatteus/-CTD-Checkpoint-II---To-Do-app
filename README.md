@@ -1,5 +1,5 @@
-# Projeto To Do - Checkpoint II
-## Projeto final da disciplina de front-end 2. Site com aplicatico To Do.
+# Projeto 'To Do' - Checkpoint II ✔
+## Projeto final da disciplina de front-end 2. Site com aplicativo To Do.
 ### Decidi pegar o projeto que foi apresentado e melhorá-lo para práticar. O primeiro upload do projeto aqui no git foi realizado quando ele estava pronto para ser apresentado, mas ainda haviam falhas, então, a fim de praticar e ter o projeto como um troféu, estou trabalhando nele. 👨🏽‍💻
 MVP Checklist:
 

@@ -56,23 +56,13 @@ function marcarConcluida(tarefa)
         .then(resposta => resposta.json())
         .then(tarefaAtualizada =>
         {
-            let data = new Date(tarefaAtualizada.createdAt)
-            let dataFormatada = data.toLocaleDateString('pt-BR')
-            let tarefa = `
-            <li class="tarefa">
-                <div class="concluida"></div>
-                <div class="descricao">
-                <p class="nome">${tarefaAtualizada.description}</p>
-                <p class="timestamp">Criada em: ${dataFormatada}</p>
-                </div>
-            </li>`
-            let terminadas = document.querySelector('.tarefas-terminadas');
-            terminadas.innerHTML += tarefa;
-
+            carregarTarefas();
         });
 }
 
-window.onload = function ()
+window.onload = carregarTarefas();
+
+function carregarTarefas()
 {
     fetch('https://ctd-todo-api.herokuapp.com/v1/tasks', {
         method: 'GET',
@@ -127,7 +117,7 @@ window.onload = function ()
                        button.classList.add('not-done');
                        button.addEventListener('click', function(){
                            console.log('Concluída');
-                           marcarConcluida(tarefa)
+                           marcarConcluida(tarefa);
                        })
    
                        const p1 = document.createElement('p')
@@ -197,6 +187,9 @@ form.addEventListener('submit', function (event)
             })
             .then(novaTarefa =>
             {
+                carregarTarefas();
+
+                /*
                 let pendente = document.querySelector('.tarefas-pendentes');
                 let data = new Date(novaTarefa.createdAt)
                 let dataFormatada = data.toLocaleDateString('pt-BR')

@@ -1,7 +1,10 @@
+//Funções longas que vou chamar direto, então vou reduzir seus tamanhos
+querySelector = (seletor) => document.querySelector(seletor);
+getId = (id) => document.getElementById(id);
+show = (msg) => console.log(msg);
+
 const obterUsuario = chave =>
 {
-    //=> função (arrow function)
-
     const userName = document.querySelector('.user-name')
     // Chamada para getMe
     // O primeiro argumento é o endereço completo da API, no caso users/getMe é para obter as informações do usuário
@@ -23,20 +26,15 @@ const obterUsuario = chave =>
         })
 }
 
-// Obtem um valor que está guardado no navegador do usuário
-const chave = localStorage.getItem('jwt')
+const chave = localStorage.getItem('jwt');
 
-// Executa a função passando como argumento o JWT
-obterUsuario(chave) //chave vai substituir o parametro a do authorization
+obterUsuario(chave);
 
-const btn = document.getElementById('closeApp')
-
-btn.onclick = function ()
+const btnDeslogar = getId('closeApp');
+btnDeslogar.onclick = function ()
 {
-    //estou registrando uma função quando o evento "event" acontecer
-
-    localStorage.clear()
-    window.location.href = 'index.html'
+    localStorage.clear();
+    window.location.href = 'index.html';
 }
 
 function marcarConcluida(tarefa)
@@ -61,7 +59,6 @@ function marcarConcluida(tarefa)
 }
 
 window.onload = carregarTarefas();
-
 function carregarTarefas()
 {
     fetch('https://ctd-todo-api.herokuapp.com/v1/tasks', {
@@ -74,7 +71,7 @@ function carregarTarefas()
         .then(resposta => resposta.json())
         .then(tarefas =>
         {
-            const tasks = document.querySelector('.tarefas-pendentes')
+            const tasks = querySelector('.tarefas-pendentes')
             //setTimeout(() => {
                 tasks.innerHTML="";
                 tarefas.forEach(tarefa =>
@@ -91,13 +88,13 @@ function carregarTarefas()
                             <p class="timestamp">Criada em: ${dataFormatada}</p>
                             </div>
                         </li>`
-                        let terminadas = document.querySelector('.tarefas-terminadas');
+                        let terminadas = querySelector('.tarefas-terminadas');
                         terminadas.innerHTML += task;
                     }
                     else
                     {
                         /*Assim eu não consigui adicionar a funcionalidade de cada item ter seu botão atrelado a propria tarefa :/
-                        let pendentes = document.querySelector('.tarefas-pendentes');
+                        let pendentes = querySelector('.tarefas-pendentes');
                         let data = new Date(tarefa.createdAt);
                         let dataFormatada = data.toLocaleDateString('pt-BR');
                         let task = `
@@ -116,7 +113,7 @@ function carregarTarefas()
                        const button = document.createElement('button');
                        button.classList.add('not-done');
                        button.addEventListener('click', function(){
-                           console.log('Concluída');
+                           show('Concluída');
                            marcarConcluida(tarefa);
                        })
    
@@ -142,15 +139,15 @@ function carregarTarefas()
                        li.appendChild(descricao)
                        tasks.appendChild(li)
                     }
-                    console.log(tarefa.description)
+                    show(tarefa.description)
                 })
                 /*
                 funciona
                 //ativa o gatilho da ação ao clicar no item de marcar concluida
-                botaoMarcar = document.querySelectorAll('button');
+                botaoMarcar = querySelectorAll('button');
                 for(const botao of botaoMarcar)
                 {
-                    console.log('botao');
+                    show('botao');
                     botao.addEventListener('click', function ()
                     {
                         marcarConcluida(tarefa)
@@ -162,18 +159,16 @@ function carregarTarefas()
             })
 }
 
-const form = document.querySelector('.nova-tarefa')
-
-form.addEventListener('submit', function (event)
+const botaoCriar = getId('btnEnvia')
+botaoCriar.addEventListener('click', function (event)
 {
-    const descricao = document.getElementById('novaTarefa').value;
-    if(descricao !== '')
+    const descricao = getId('novaTarefa').value;
+    if(descricao) //uso de truthy e falsy
     {
-        console.log(descricao);
         const body = {
             description: descricao,
             completed: false
-        }
+        };
         fetch('https://ctd-todo-api.herokuapp.com/v1/tasks', {
             method: 'POST',
             headers: {
@@ -187,71 +182,15 @@ form.addEventListener('submit', function (event)
             })
             .then(novaTarefa =>
             {
+                getId('novaTarefa').value = '';
                 carregarTarefas();
-
-                /*
-                let pendente = document.querySelector('.tarefas-pendentes');
-                let data = new Date(novaTarefa.createdAt)
-                let dataFormatada = data.toLocaleDateString('pt-BR')
-                let task = `
-                <li class="tarefa">
-                    <button class="not-done">
-                    <div class="descricao">
-                        <p class="nome">${novaTarefa.description}</p>
-                        <p class="timestamp">Criada em: ${dataFormatada}</p>
-                    </div>
-                </li>`
-                pendente.appendChild(task);
-
-                /*
-                // console.log('abacate');
-                let tasks = document.querySelector('.tarefas-pendentes');
-                const li = document.createElement('li')
-                const descricao = document.createElement('div');
-    //botão pra marcar como concluído
-                const button = document.createElement('button');
-                button.classList.add('not-done');
-    
-                const p1 = document.createElement('p')
-                const p2 = document.createElement('p')
-                const description = document.createTextNode(novaTarefa.description)
-    
-                let data = new Date(novaTarefa.createdAt)
-                let dataFormatada = 'Criada em: ' + data.toLocaleDateString('pt-BR')
-                const dataNode = document.createTextNode(dataFormatada)
-    
-                // const criadoEm = document.createTextNode(novaTarefa.createdAt)
-    
-                p1.appendChild(description)
-                p2.appendChild(dataNode)
-                descricao.appendChild(p1)
-                descricao.appendChild(p2)
-                //div1.appendChild(button)
-                //div1.classList.add('not-done')
-                li.classList.add('tarefa')
-                descricao.classList.add('descricao')
-                p1.classList.add('nome')
-                p2.classList.add('timestamp')
-                //li.appendChild(div1)
-                li.appendChild(button)
-                li.appendChild(descricao)
-                tasks.appendChild(li)
-    
-                // let notDone = document.querySelector('button.not-done');
-                // notDone.onclick = function ()
-                // button.addEventListener('click', function(){
-                //     console.log('clicoiu');
-                //     alert("alou")
-                // })
-    */
-                console.log(novaTarefa)
-                
             })
     }
     else
     {
         event.preventDefault(); 
-        alert('insira um nome válido');
+        //ficará melhor quando eu alertar direto pelo estilo no HTML
+        alert('insira um nome válido para a tarefa');
     }
 
 })

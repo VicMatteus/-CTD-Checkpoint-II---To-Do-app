@@ -181,7 +181,16 @@ a {
   font-size: .9em;
   color: rgb(134, 134, 134);
 }
-
+.excluir
+{
+    margin-left: 15px;
+    font-size: .7em;
+    background-color: rgb(218, 88, 88);
+    color: white;
+    border-radius: 50vh;
+    padding: 5px 10px;
+    cursor: pointer;
+}
 /* Tarefas terminadas ----------------------------------------------------------- */
 
 .titulo-terminadas {
@@ -242,3 +251,4 @@ a {
   0%{ opacity: 0.5;}
   100%{ opacity: 0.8;}
 }
+

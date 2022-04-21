@@ -1,50 +1,80 @@
-const obterUsuario = a =>
-{
-    //=> função (arrow function)
+//Funções longas que vou chamar direto, então vou reduzir seus tamanhos
+querySelector = (seletor) => document.querySelector(seletor);
+getId = (id) => document.getElementById(id);
+show = (msg) => console.log(msg);
 
+const obterUsuario = chave =>
+{
     const userName = document.querySelector('.user-name')
-    // Chamada para getMe
-    // O primeiro argumento é o endereço completo da API, no caso users/getMe é para obter as informações do usuário
-    // Sempre enviamos a informação do Content-type para o servidor entender o tipo de informação que enviamos (uma string em formato JSON)
-    // Para informações privadas (ou seja, que só um usuario autenticado pode acessar) precisamo informar o JWT (no authorization do header)
+
     fetch('https://ctd-todo-api.herokuapp.com/v1/users/getMe', {
         headers: {
             'Content-type': 'application/json',
-            authorization: a //a = parametro
+            authorization: chave 
         }
     })
-        // O primeiro retorno é um objeto resposta, para acessar o valor da resposta (os dados) precisamos pedir para transformar a resposta em um objeto
+
         .then(resposta => resposta.json())
-        // O segundo retorno obtem a resposta em formato JSON
-        // Em seguida buscamos o elemento na tela e anexamos o valor (nome + sobrenome)
+
         .then(usuario =>
         {
-            userName.innerText = `${usuario.firstName} ${usuario.lastName}` //inserindo os dados firsName e lastName dentro do elemento userName
+            userName.innerText = `${usuario.firstName} ${usuario.lastName}` //inserindo os dados 
         })
 }
 
-// Obtem um valor que está guardado no navegador do usuário
-const chave = localStorage.getItem('chave jwt')
+const chave = localStorage.getItem('jwt');
 
-// Executa a função passando como argumento o JWT
-obterUsuario(chave) //chave vai substituir o parametro a do authorization
+obterUsuario(chave);
 
-const btn = document.getElementById('closeApp')
-
-btn.onclick = function ()
+const btnDeslogar = getId('closeApp');
+btnDeslogar.onclick = function ()
 {
-    //estou registrando uma função quando o evento "event" acontecer
-
-    localStorage.clear()
-    window.location.href = 'index.html'
+    localStorage.clear();
+    window.location.href = 'index.html';
 }
 
-function marcarConcluída(tarefaID)
+function marcarConcluida(tarefa)
 {
-    
+    let body = {
+        "description": tarefa.description,
+        "completed": true
+    }
+    fetch(`https://ctd-todo-api.herokuapp.com/v1/tasks/${tarefa.id}`, {
+        method: 'PUT',
+        headers: {
+            'Content-type': 'application/json',
+            authorization: chave,
+        },
+        body: JSON.stringify(body)
+    })
+        .then(resposta => resposta.json())
+        .then(tarefaAtualizada =>
+        {
+            carregarTarefas();
+        });
 }
 
-window.onload = function ()
+function excluir(task)
+{
+    show("exlcuir");
+    settings = {
+        "method": "DELETE",
+        "headers": {
+            "authorization": chave
+        }
+    }
+    fetch(`https://ctd-todo-api.herokuapp.com/v1/tasks/${task.id}`, settings)
+        .then(resposta => resposta.json())
+        .then(informacao => 
+        {
+            alert(informacao);
+            carregarTarefas();
+        })
+}
+
+
+window.onload = carregarTarefas();
+function carregarTarefas()
 {
     fetch('https://ctd-todo-api.herokuapp.com/v1/tasks', {
         method: 'GET',
@@ -56,100 +86,112 @@ window.onload = function ()
         .then(resposta => resposta.json())
         .then(tarefas =>
         {
-            const tasks = document.querySelector('.tarefas-pendentes')
-            tasks.innerHTML="";
+            let pendentes = querySelector('.tarefas-pendentes');
+            let terminadas = querySelector('.tarefas-terminadas');
+            pendentes.innerHTML = "";
+            terminadas.innerHTML = "";
             tarefas.forEach(tarefa =>
             {
-                const li = document.createElement('li')
-                const div1 = document.createElement('div')
-                const descricao = document.createElement('div')
+                if (tarefa.completed)
+                {
+                    let data = new Date(tarefa.createdAt)
+                    let dataFormatada = data.toLocaleDateString('pt-BR')
 
-                const button = document.createElement('button');
-                button.classList.add('not-done');
-                button.addEventListener('click', function(){
-                    console.log('Concluída');
-                    marcarConcluída(tarefa.id)
-                })
+                    let li = document.createElement('li');
+                    li.classList.add("tarefa");
 
-                const p1 = document.createElement('p')
-                const p2 = document.createElement('p')
-                const description = document.createTextNode(tarefa.description)
-                let data = new Date(tarefa.createdAt)
-                let dataFormatada = 'Criada em: ' + data.toLocaleDateString('pt-BR')
-                const dataNode = document.createTextNode(dataFormatada)
-                
-                p1.appendChild(description)
-                p2.appendChild(dataNode)
-                descricao.appendChild(p1)
-                descricao.appendChild(p2)
-                
-                li.classList.add('tarefa')
-                descricao.classList.add('descricao')
-                p1.classList.add('nome')
-                p2.classList.add('timestamp')
-                
-                li.appendChild(button)
-                li.appendChild(div1)
-                li.appendChild(descricao)
-                tasks.appendChild(li)
+                    let item = `
+                        <div class="concluida"></div>
+                        <div class="descricao">
+                            <p class="nome">${tarefa.description}</p>
+                            <p class="timestamp">Criada em: ${dataFormatada}</p>
+                        </div>`
 
-                console.log(tarefa.description)
+                    template = document.createElement('template');
+                    template.innerHTML = item;
+
+                    li.appendChild(template.content);
+
+                    let excluirBtn = document.createElement('button');
+                    excluirBtn.classList.add('excluir');
+                    excluirBtn.innerText = 'Excluir'
+                    excluirBtn.addEventListener('click', function ()
+                    {
+                        excluir(tarefa);
+                    });
+                    li.appendChild(excluirBtn);
+                    terminadas.appendChild(li)
+                }
+                else
+                {
+                    let data = new Date(tarefa.createdAt);
+                    let dataFormatada = data.toLocaleDateString('pt-BR');
+
+                    let li = document.createElement('li');
+                    li.classList.add("tarefa");
+                    let not_done = document.createElement('div');
+                    not_done.classList.add('not-done');
+                    not_done.addEventListener('click', () => marcarConcluida(tarefa));
+
+                    li.append(not_done);
+                    let task = `<div class="descricao">
+                            <p class="nome">${tarefa.description}</p>
+                            <p class="timestamp">Criada em: ${dataFormatada}</p>
+                        </div>`
+                    template = document.createElement('template');
+                    template.innerHTML = task;
+                    li.appendChild(template.content)
+                    /*
+                    essa é uma jogada bacana tirada daqui: https://stackoverflow.com/questions/494143/creating-a-new-dom-element-from-an-html-string-using-built-in-dom-methods-or-pro
+                    */
+                    let excluirBtn = document.createElement('button');
+                    excluirBtn.classList.add('excluir');
+                    excluirBtn.innerText = 'Excluir'
+                    excluirBtn.addEventListener('click', function ()
+                    {
+                        excluir(tarefa);
+                    });
+                    li.appendChild(excluirBtn);
+                    pendentes.appendChild(li);
+                }
             })
         })
 }
 
-const form = document.querySelector('#submit')
-
-form.addEventListener('click', function (event)
+const botaoCriar = getId('btnEnvia')
+botaoCriar.addEventListener('click', function (event) //inflizmente, com submit não funciona bem.
 {
-    const atividade = {
-        description: document.querySelector('#novaTarefa').value,
-        completed: false
-    }
-    fetch('https://ctd-todo-api.herokuapp.com/v1/tasks', {
-        method: 'POST',
-        headers: {
-            'Content-Type': 'application/json',
-            authorization: chave
-        },
-        body: JSON.stringify(atividade)
-    })
-        .then(response => response.json())
-        .then(novaTarefa =>
-        {
-            const li = document.createElement('li')
-            const div1 = document.createElement('div')
-            const descricao = document.createElement('div');
-//botão pra marcar como concluído
-            const button = document.createElement('button');
-            button.classList.add('not-done');
-
-            const p1 = document.createElement('p')
-            const p2 = document.createElement('p')
-            const description = document.createTextNode(novaTarefa.description)
-            const createdAt = document.createTextNode(novaTarefa.createdAt)
-            p1.appendChild(description)
-            p2.appendChild(createdAt)
-            descricao.appendChild(p1)
-            descricao.appendChild(p2)
-            div1.appendChild(button)
-            //div1.classList.add('not-done')
-            li.classList.add('tarefa')
-            descricao.classList.add('descricao')
-            p1.classList.add('nome')
-            p2.classList.add('timestamp')
-            li.appendChild(div1)
-            li.appendChild(descricao)
-            tasks.appendChild(li)
-
-            // let notDone = document.querySelector('button.not-done');
-            // notDone.onclick = function ()
-            button.addEventListener('click', function(){
-                console.log('clicoiu');
-                alert("alou")
-            })
-
-            console.log(novaTarefa)
+    const descricao = getId('novaTarefa').value;
+    if (descricao) //uso de truthy e falsy
+    {
+        const body = {
+            description: descricao,
+            completed: false
+        };
+        fetch('https://ctd-todo-api.herokuapp.com/v1/tasks', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+                authorization: chave
+            },
+            body: JSON.stringify(body)
         })
-})
+            .then(response =>
+            {
+                return response.json()
+            })
+            .then(novaTarefa =>
+            {
+                //Aqui, o problema de apenas criar uma tarefa por login estava no botão. Não sei o motivo ainda.
+                getId('novaTarefa').value = '';
+                carregarTarefas();
+            })
+    }
+    else
+    {
+        event.preventDefault();
+        //ficará melhor quando eu alertar direto pelo estilo no HTML
+        alert('insira um nome válido para a tarefa');
+    }
 
+})

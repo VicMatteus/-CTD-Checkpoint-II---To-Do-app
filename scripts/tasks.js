@@ -6,23 +6,19 @@ show = (msg) => console.log(msg);
 const obterUsuario = chave =>
 {
     const userName = document.querySelector('.user-name')
-    // Chamada para getMe
-    // O primeiro argumento é o endereço completo da API, no caso users/getMe é para obter as informações do usuário
-    // Sempre enviamos a informação do Content-type para o servidor entender o tipo de informação que enviamos (uma string em formato JSON)
-    // Para informações privadas (ou seja, que só um usuario autenticado pode acessar) precisamo informar o JWT (no authorization do header)
+
     fetch('https://ctd-todo-api.herokuapp.com/v1/users/getMe', {
         headers: {
             'Content-type': 'application/json',
             authorization: chave //a = parametro
         }
     })
-        // O primeiro retorno é um objeto resposta, para acessar o valor da resposta (os dados) precisamos pedir para transformar a resposta em um objeto
+
         .then(resposta => resposta.json())
-        // O segundo retorno obtem a resposta em formato JSON
-        // Em seguida buscamos o elemento na tela e anexamos o valor (nome + sobrenome)
+
         .then(usuario =>
         {
-            userName.innerText = `${usuario.firstName} ${usuario.lastName}` //inserindo os dados firsName e lastName dentro do elemento userName
+            userName.innerText = `${usuario.firstName} ${usuario.lastName}` //inserindo os dados 
         })
 }
 
@@ -110,10 +106,10 @@ function carregarTarefas()
                             <p class="nome">${tarefa.description}</p>
                             <p class="timestamp">Criada em: ${dataFormatada}</p>
                         </div>`
-                    
+
                     template = document.createElement('template');
                     template.innerHTML = item;
-                    
+
                     li.appendChild(template.content);
 
                     let excluirBtn = document.createElement('button');
@@ -199,4 +195,3 @@ botaoCriar.addEventListener('click', function (event) //inflizmente, com submit 
     }
 
 })
-
